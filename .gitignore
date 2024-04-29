@@ -378,3 +378,6 @@ pyrightconfig.json
 # Ignore all local history of files
 .history
 .ionide
+.idea
+.gitignore
+.DS_Store
