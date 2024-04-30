@@ -4,7 +4,7 @@ import csv
 import graph
 import passenger
 
-PASSENGERS_NUM = 10
+PASSENGERS_NUM = 100000
 SIMULATE_TIMESTEP = 10
 
 g = graph.Graph()
@@ -52,4 +52,4 @@ for index in range(PASSENGERS_NUM):
 
 for _ in range(SIMULATE_TIMESTEP):
     p.simulate_for_one_step(g)
-# p.show_current_location()
+p.show_infected_proportion()
