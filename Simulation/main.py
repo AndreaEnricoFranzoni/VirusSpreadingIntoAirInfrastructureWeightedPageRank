@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import csv
 import graph
@@ -9,7 +8,7 @@ SIMULATE_TIMESTEP = 10
 
 g = graph.Graph()
 
-airports_file_path = 'airports.dat'
+airports_file_path = '../Data/airports.dat'
 data_list = []
 with open(airports_file_path, 'r') as file:
     reader = csv.reader(file, delimiter=',')
@@ -24,7 +23,7 @@ dataset.columns = ['Airport ID', 'Name', 'City', 'Country', 'IATA', 'ICAO', 'Lat
 for _, route in dataset.iterrows():
     g.init_airport(int(route['Airport ID']))
 
-routes_file_path = 'routes.dat'
+routes_file_path = '../Data/routes.dat'
 data_list = []
 with open(routes_file_path, 'r') as file:
     reader = csv.reader(file, delimiter=',')
