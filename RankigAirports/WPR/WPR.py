@@ -1,5 +1,8 @@
+import math
+
 import numpy as np
 from scipy.stats import binom
+
 
 class WPR:
 
@@ -9,13 +12,12 @@ class WPR:
                  gamma: float,
                  theta: float,
                  alpha: float,
-                 initial_conditions_infected
-                 )->None:
+                 initial_conditions_infected: np.ndarray,
+                 ) -> None:
 
         '''
         Constructor:
-        Assumptions: - at each time steps, in each airport, there is a number of people equal to the
-                       to the number of arriving fligths*100
+        Assumptions: - at each time steps, in each airport, there is a number of people equal to the number of arriving fligths*100
                      - number of new infected people: binomial r.v. where n is the number of non-sick people in the airport
                                                       at the beginning of the time step, and p is proportional to the number of infected peopple in the airport
 
@@ -28,7 +30,7 @@ class WPR:
         :param initial_conditions_infected: number of infected in each airport at time 0
         '''
 
-        if A.shape() != W.shape():
+        if A.shape != W.shape:
             raise ValueError('A and W need to have the same dimensions')
         if gamma < 0 or gamma >= 1:
             raise ValueError('Gamma has to be in [0,1)')
@@ -39,23 +41,22 @@ class WPR:
 
         self.A = A
         self.W = W
-        self.n_airports = A.shape()[0]
+        self.n_airports = A.shape[0]
         self.ranks = np.ones(self.n_airports)
 
-        self.degree_out = [sum(A[i,:]) for i in range(self.n_airports)]
-        self.degree_in = [sum(A[:,i]) for i in range(self.n_airports)]
+        self.degree_out = [sum(A[i, :]) for i in range(self.n_airports)]
+        self.degree_in = [sum(A[:, i]) for i in range(self.n_airports)]
 
-        self.strength_out = [sum(W[i,:]) for i in range(self.n_airports)]
-        self.strength_in = [sum(W[:,i]) for i in range(self.n_airports)]
+        self.strength_out = [sum(W[i, :]) for i in range(self.n_airports)]
+        self.strength_in = [sum(W[:, i]) for i in range(self.n_airports)]
 
         self.gamma = gamma
         self.theta = theta
         self.alpha = alpha
 
-        self.n_people_per_airport = [np.sum(A[i,:]) for i in range(self.n_airports)]*100
-        self.infected_per_airport = initial_conditions_infected
+        self.n_people_per_airport = [np.sum(A[i, :]) * 100 for i in range(self.n_airports)]
+        self.infected_per_airport = np.clip(initial_conditions_infected, np.zeros(self.n_airports), self.n_people_per_airport)
         self.non_infected_per_airport = self.n_people_per_airport - self.infected_per_airport
-
 
     def probability_new_infected_per_airport(self):
 
@@ -64,10 +65,22 @@ class WPR:
         :return: a list with the probability of a single infection in each airport
         '''
         alpha = 0.25
-        return [alpha*(i/j) for i in self.infected_per_airport for j in self.n_people_per_airport]
 
+        a = self.infected_per_airport
+        b = self.n_people_per_airport
+        infected_ratio = np.divide(a, b, out=np.zeros_like(a), where=b != 0)  # For some reason it still divides by 0.
 
-    def new_infected_per_airport(self,seed):
+        x = []
+        for i in range(self.n_airports):
+            if math.isnan(infected_ratio[i]):
+                x.append(0)
+            else:
+                x.append(alpha * infected_ratio[i])
+
+        return x
+        # return [alpha * (i / j) for i in self.infected_per_airport for j in self.n_people_per_airport]
+
+    def new_infected_per_airport(self):
 
         '''
         How many new infected in each airport at each time step: binomial rv sample
@@ -75,10 +88,10 @@ class WPR:
         '''
 
         prob_inf = self.probability_new_infected_per_airport()
-        return [binom(self.non_infected_per_airport[i], prob_inf[i],seed=seed) for i in range(self.n_airports)]
+        probability_list = [binom.rvs(int(self.non_infected_per_airport[i]), prob_inf[i]) for i in range(self.n_airports)]
+        return np.array(probability_list, dtype=np.int64)
 
-
-    def update_infected_per_airport(self, new_infected):
+    def update_infected_per_airport(self, new_infected: np.ndarray[float]):
 
         '''
         Updating the number of infected and non-infected people per airport
@@ -88,26 +101,24 @@ class WPR:
 
         return None
 
-
-    def beta_computation(self,seed):
+    def beta_computation(self):
 
         '''
         Beta evaluation for each airport: here the infection happens
         :return: list with beta_i
         '''
 
-        #new infected
-        new_infected = self.new_infected_per_airport(seed)
-        #update of infected people
-        self.update_infected_per_airport(new_infected=new_infected)
+        # new infected
+        new_infected = self.new_infected_per_airport()
+        # update of infected people
+        self.update_infected_per_airport(new_infected)
 
-        #evaluaton of beta for each airport and its normalization
-        beta_i = [self.alpha*self.strength_in[i] + (1-self.alpha)*new_infected[i] for i in range(self.n_airports)]
+        # evaluaton of beta for each airport and its normalization
+        beta_i = [self.alpha * self.strength_in[i] + (1 - self.alpha) * new_infected[i] for i in range(self.n_airports)]
         sum_beta = sum(beta_i)
-        beta_star = beta_i/sum_beta
+        beta_star = beta_i / sum_beta
 
         return beta_star
-
 
     def B_computation(self, beta_star):
 
@@ -116,17 +127,15 @@ class WPR:
         :return: matrix B
         '''
 
-        B = np.zeros((self.n_airports,self.n_airports))
+        B = np.zeros((self.n_airports, self.n_airports))
 
         for i in range(self.n_airports):
             for j in range(self.n_airports):
-
-                B[i,j] = beta_star[i]
+                B[i, j] = beta_star[i]
 
         return B
 
-
-    def M_computation(self, beta_star):
+    def M_computation(self, beta_star: np.ndarray[float]):
 
         '''
         M evaluated as the paper
@@ -135,41 +144,38 @@ class WPR:
 
         M = np.zeros((self.n_airports, self.n_airports))
 
+        # Slow :)
         for i in range(self.n_airports):
             for j in range(self.n_airports):
 
                 if self.degree_out[j] != 0:
-                    M[i,j] = self.theta*self.W[j,i]/self.strength_out[j] + (1-self.theta)*self.A[j,i]/self.degree_out[j]
+                    M[i, j] = self.theta * self.W[j, i] / self.strength_out[j] + (1 - self.theta) * self.A[j, i] / self.degree_out[j]
                 else:
-                     M[i,j] = beta_star[i]
+                    M[i, j] = beta_star[i]
 
+        return M
 
-    def M_star_computation(self,beta_star):
+    def M_star_computation(self):
+        beta_star = self.beta_computation()
+        return self.gamma * self.M_computation(beta_star) + (1 - self.gamma) * self.B_computation(beta_star)
 
-        return self.gamma*self.M_computation(beta_star) + (1-self.gamma)*self.B_computation(beta_star)
+    def step(self):
+        M_star = self.M_star_computation()
+        self.ranks = M_star.dot(self.ranks)
 
+    def converge(self, tolerance: float, max_iterations: int):
+        for iteration in range(max_iterations):
+            # iterations of WPR: power iteration
+            prev_ranks = self.ranks
 
-    def WPR_algo(self,seed):
+            self.step()
 
-        tol = 30
-        old_ranks = np.array(self.ranks)
-        new_ranks = np.array(self.ranks)
+            # Return early if we converged enough.
+            diff = np.linalg.norm(self.ranks - prev_ranks)
 
-        while (tol > 1):
-             #iterations of WPR: power iteration
-             beta_star = self.beta_computation(seed)
-             M_star = self.M_star_computation(beta_star)
+            print("Step {iteration} converged by {diff}".format(iteration=iteration, diff=diff))
 
-             new_ranks = M_star*old_ranks
+            if (diff < tolerance):
+                return self.ranks
 
-             tol = np.linalg.norm(new_ranks-old_ranks)
-             old_ranks = new_ranks
-
-        self.ranks = new_ranks
- 
-        return new_ranks
-
-
-
-
-
+        return self.ranks

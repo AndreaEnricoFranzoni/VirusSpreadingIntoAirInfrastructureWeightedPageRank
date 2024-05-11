@@ -39,8 +39,8 @@ for index,row in flights.iterrows():
     W.loc[row['Source airport']][row['Destination airport']] += 1
 
 #matrices read and saved in a file to be used in the other scripts
-A.to_csv("/Users/andreafranzoni/Documents/Politecnico/Magistrale/V anno/Data Mining/Project/DataMiningProject/Data/A.csv")
-W.to_csv("/Users/andreafranzoni/Documents/Politecnico/Magistrale/V anno/Data Mining/Project/DataMiningProject/Data/W.csv")
+# A.to_csv("/Users/andreafranzoni/Documents/Politecnico/Magistrale/V anno/Data Mining/Project/DataMiningProject/Data/A.csv")
+# W.to_csv("/Users/andreafranzoni/Documents/Politecnico/Magistrale/V anno/Data Mining/Project/DataMiningProject/Data/W.csv")
 
 
 
