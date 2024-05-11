@@ -52,7 +52,7 @@ class WPR:
         self.theta = theta
         self.alpha = alpha
 
-        self.n_people_per_airport = [np.sum(A[i,:]) for i in range(self.n_airports)]
+        self.n_people_per_airport = [np.sum(A[i,:]) for i in range(self.n_airports)]*100
         self.infected_per_airport = initial_conditions_infected
         self.non_infected_per_airport = self.n_people_per_airport - self.infected_per_airport
 
@@ -64,7 +64,7 @@ class WPR:
         :return: a list with the probability of a single infection in each airport
         '''
         alpha = 0.25
-        return [alpha*i for i in self.infected_per_airport]
+        return [alpha*(i/j) for i in self.infected_per_airport for j in self.n_people_per_airport]
 
 
     def new_infected_per_airport(self,seed):
@@ -163,6 +163,7 @@ class WPR:
              new_ranks = M_star*old_ranks
 
              tol = np.linalg.norm(new_ranks-old_ranks)
+             old_ranks = new_ranks
 
         self.ranks = new_ranks
  
