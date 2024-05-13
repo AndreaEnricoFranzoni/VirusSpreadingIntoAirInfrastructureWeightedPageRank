@@ -7,10 +7,10 @@ W = pd.read_csv('W.csv', index_col=0)  # Weights matrix
 
 
 initially_infected_at_airports = np.ones(A.shape[0], dtype=float)  # At every airport there is one infected person.
-wpr = WPR(A.to_numpy(), W.to_numpy(), 0.95, 0.8, 0.25, initially_infected_at_airports)
+wpr = WPR(A.to_numpy(), W.to_numpy(), 0.95, 0.9, 0.45, initially_infected_at_airports)
 
 # Rank airports.
-wpr.converge(10, 5)
+wpr.converge(1, 25)
 
 ranks = wpr.ranks
 airports = A.keys().tolist()
