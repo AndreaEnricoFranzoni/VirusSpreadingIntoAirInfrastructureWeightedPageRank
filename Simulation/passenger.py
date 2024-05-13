@@ -15,6 +15,9 @@ class Passenger:
 
     def simulate_for_one_step(self, graph, airports):
 
+        # Whether to shut down
+        
+
         # Transmission
         for passenger_id, passenger_info in self.passengers_info.items():
             current_location = passenger_info['location']
@@ -32,16 +35,25 @@ class Passenger:
             self.passengers_info[passenger_id]['location'] = dest_id
 
         # Simulate the infection at the airport
-        # for (airline_id, dest_id), passengers_onboard in self.passengers_onboard.items():
-        #     infected_counter = 0
-        #     for passenger_id in passengers_onboard:
-        #         if self.passengers_info[passenger_id]['infected']:
-        #             infected_counter += 1
-        #     infected_possibility = ALPHA * infected_counter
-        #     for passenger_id in passengers_onboard:
-        #         if not self.passengers_info[passenger_id]['infected']:
-        #             if random.random() < infected_possibility:
-        #                 self.passengers_info[passenger_id]['infected'] = True
+        for _, passengers in airports.airports.items():
+            if len(passengers) == 0:
+                continue
+            infected_num = self.calculate_infected_passengers(passengers)
+            infection_possibility = ALPHA * infected_num / len(passengers)
+            self.simulate_infection(passengers, infection_possibility)
+
+    def calculate_infected_passengers(self, passengers):
+        counter = 0
+        for passenger_id in passengers:
+            if self.passengers_info[passenger_id]['infected']:
+                counter += 1
+        return counter
+
+    def simulate_infection(self, passengers, infection_possibility):
+        for passenger_id in passengers:
+            if not self.passengers_info[passenger_id]['infected']:
+                if random.random() < infection_possibility:
+                    self.passengers_info[passenger_id]['infected'] = True
 
     def show_current_location(self):
         for passenger_id, passenger_info in self.passengers_info.items():

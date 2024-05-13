@@ -5,7 +5,7 @@ import passenger
 import airport
 
 PASSENGERS_NUM = 100000
-SIMULATE_TIMESTEP = 1
+SIMULATE_TIMESTEP = 10
 
 g = graph.Graph()
 airports = airport.Airport()
@@ -45,15 +45,13 @@ for _, route in dataset.iterrows():
 p = passenger.Passenger(g)
 
 for index in range(PASSENGERS_NUM):
-    if index == 0:
+    if index % 3 == 0:
         p.add_passenger(index, 737, True)
 
     else:
         p.add_passenger(index, 737, False)
 
     airports.init_passenger(737, index)
-
-
 
 for _ in range(SIMULATE_TIMESTEP):
     p.simulate_for_one_step(g, airports)
