@@ -30,10 +30,11 @@ class PR:
         self.gamma = gamma
 
 
+
     def M_computation(self):
 
         '''
-        M evaluated as the paper
+        M evaluated as PageRank propose
         :return: matrix M as np.array
         '''
 
@@ -44,34 +45,9 @@ class PR:
             for j in range(self.n_airports):
 
                 if (self.A[j,i]!=0):
-                    
-
-
-
+                    M[i,j] = 1/self.degree_out[j]
 
         return M
-
-
-    def M_star_computation(self):
-
-        '''
-        M_star evaluated as the paper
-        :return: M_star matrix as np.array
-        '''
-
-        beta_star = self.beta_computation()
-        return self.gamma * self.M_computation(beta_star) + (1 - self.gamma) * self.B_computation(beta_star)
-
-
-    def step(self):
-
-        '''
-        The step of the power iteration for reaching the final ranking.
-        Matrix-vector product between M_star and the old ranks is computed after the infection happens, and so M_star is updated accordingly
-        '''
-
-        M_star = self.M_star_computation()
-        self.ranks = M_star.dot(self.ranks)
 
 
     def converge(self, tolerance: float, max_iterations: int):
@@ -82,12 +58,17 @@ class PR:
         :param max_iterations: max number of iterations after that we stop the algorithm
         :return: the ranks after power iteration is computed
         '''
+        M = self.M_computation()
+        constant_term = ((1-self.gamma)/self.n_airports)*np.ones(self.n_airports)
+
         for iteration in range(max_iterations):
 
             # iterations of WPR: power iteration
             prev_ranks = self.ranks
             #here infection happens
-            self.step()
+            temp = M.dot(self.ranks)
+
+            self.ranks = self.gamma*temp + constant_term
 
             # Return early if we converged enough.
             diff = np.linalg.norm(self.ranks - prev_ranks)
