@@ -4,6 +4,8 @@ import airport
 # Assuming the possibility to be infected on the plane is directly proportional to the number of virus carriers
 ALPHA = 0.1
 
+shutdown_threshold = 0.05
+
 
 class Passenger:
     def __init__(self, graph):
@@ -13,29 +15,41 @@ class Passenger:
         passenger_info = {'location': airport_id, 'infected': infected}
         self.passengers_info[passenger_id] = passenger_info
 
-    def simulate_for_one_step(self, graph, airports):
+    def simulate_for_one_step(self, graph, airports, impt_airports = []):
 
         # Whether to shut down
-        
+
+        for airport_id, passengers in airports.airports.items():
+            if airport_id in impt_airports:
+                infected_ratio = self.calculate_infected_passengers(passengers) / len(passengers)
+                if infected_ratio > shutdown_threshold:
+                    airports.status[airport_id] = False
 
         # Transmission
         for passenger_id, passenger_info in self.passengers_info.items():
             current_location = passenger_info['location']
-            if not graph.graph[current_location]:
+            if not graph.graph[current_location]:  # dead-end
+                continue
+
+            if not airports.status[current_location]:
                 continue
 
             proportion = []
             dest_option = []
             for dest_id, route_weight in graph.graph[current_location].items():
-                proportion.append(route_weight)
-                dest_option.append(dest_id)
-
+                if airports.status[dest_id]:
+                    proportion.append(route_weight)
+                    dest_option.append(dest_id)
+            if len(dest_option) == 0:
+                continue
             dest_id = random.choices(dest_option, weights=proportion)[0]
             airports.update_passenger(passenger_id, current_location, dest_id)
             self.passengers_info[passenger_id]['location'] = dest_id
 
         # Simulate the infection at the airport
-        for _, passengers in airports.airports.items():
+        for airport_id, passengers in airports.airports.items():
+            if not airports.status[airport_id]:
+                continue
             if len(passengers) == 0:
                 continue
             infected_num = self.calculate_infected_passengers(passengers)
