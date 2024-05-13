@@ -54,9 +54,11 @@ for index in range(PASSENGERS_NUM):
     airports.init_passenger(737, index)
 
 for _ in range(SIMULATE_TIMESTEP):
-    p.simulate_for_one_step(g, airports, [])
+    p.simulate_for_one_step(g, airports, [737])
 
-airports.show_current_airports()
+# airports.show_current_airports()
 
 p.show_infected_proportion()
+p.show_positive_passengers()
+print(airports.status)
 # p.show_current_location()
