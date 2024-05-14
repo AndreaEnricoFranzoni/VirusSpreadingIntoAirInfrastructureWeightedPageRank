@@ -73,6 +73,7 @@ class WPR:
         b = self.n_people_per_airport
         infected_ratio = np.divide(a, b, np.zeros(a.shape, dtype=float), where=(b != 0))  # For some reason it still divides by 0.
 
+        # Filter NaN values
         x = []
         for i in range(self.n_airports):
             if math.isnan(infected_ratio[i]):
