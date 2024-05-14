@@ -8,25 +8,23 @@ W = pd.read_csv('W.csv', index_col=0)  # Weights matrix
 
 
 initially_infected_at_airports = np.ones(A.shape[0], dtype=float)  # At every airport there is one infected person.
-wpr = WPR(A.to_numpy(), W.to_numpy(), 0.95, 0.9, 0.45, initially_infected_at_airports)
-
+r = WPR(A.to_numpy(), W.to_numpy(), 0.95, 0.9, 0.45, initially_infected_at_airports)
+#r = PR(A.to_numpy(),0.95)
 
 
 # Rank airports.
 #WPR
-#wpr.converge(1, 25)
+r.converge(1, 25)
+ranks = r.ranks
+
 #PR
+#r.converge(1,25)
+#ranks = pr.ranks
 
 
-#ranks_wpr = wpr.ranks
-
-
-pr = PR(A.to_numpy(),0.95)
-pr.converge(1,2)
-ranks_pr = pr.ranks
 airports = A.keys().tolist()
-idx_sort = ranks_pr.argsort()
+idx_sort = ranks.argsort()
 # idx_sort = range(len(ranks)) # Sorts alphabetically.
 
 for airport_idx in idx_sort:
-    print("{airport}: {value}".format(airport=airports[airport_idx], value=ranks_pr[airport_idx]))
+    print("{airport}: {value}".format(airport=airports[airport_idx], value=ranks[airport_idx]))
