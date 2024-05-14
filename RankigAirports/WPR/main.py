@@ -7,7 +7,13 @@ A = pd.read_csv('A.csv', index_col=0)  # Adjacency matrix
 W = pd.read_csv('W.csv', index_col=0)  # Weights matrix
 
 
-initially_infected_at_airports = np.ones(A.shape[0], dtype=float)  # At every airport there is one infected person.
+
+
+# At every airport there is one infected person.
+# Since there is no recovery atm, everybody will be infected after just a few time steps.
+initially_infected_at_airports = np.ones(A.shape[0], dtype=float)
+# initially_infected_at_airports[A.keys().tolist().index("ARN")] = 1
+
 wpr = WPR(A.to_numpy(), W.to_numpy(), 0.95, 0.9, 0.45, initially_infected_at_airports)
 
 
