@@ -1,6 +1,8 @@
 import numpy as np
 import math
 from scipy.stats import binom
+from scipy.stats import poisson
+from typing import Optional
 
 
 class WPR:
@@ -13,6 +15,8 @@ class WPR:
                  alpha: float,
                  p_alpha: float,
                  initial_conditions_infected: np.ndarray,
+                 recovery: Optional[bool] = False,
+                 recovery_rate: Optional[float] = 0.2
                  ) -> None:
 
         '''
@@ -21,7 +25,8 @@ class WPR:
                      - number of new infected people: binomial r.v.: n is the total number of trial, p the probability that we have a success in a single trial:
                                                       - n is the number of non-sick people in the airport at the beginning of the time step (only non infected people can be infected)
                                                       - p is a function of the number of already infected people (deterministic function, proportional to the proportion of already infected people right now)
-
+                     - if recovery: after infection: a Poisson sample is performed to count how many of the infected people recover, with the lambda parameter being equal
+                                                     to a paramter times the number of infected people
         Algorithm relays on the paper, with a difference: beta_i varies along the algorithm: Markov chain is  ot homogeneus anymore: relays
 
         :param A: adjacency matrix
@@ -31,6 +36,8 @@ class WPR:
         :param alpha: parameter of the convex combination for evaluating beta_i: has to be low in order to give more importance to the infection parameter
         :param p_alpha: p_alpha*proportion_of_infected_people_at_airport is the probability that a person get infected
         :param initial_conditions_infected: number of infected in each airport at time 0
+        :param recovery: if recovery is included in the model (default is False)
+        :param recovery_rate: the percentage of infected people that on average recover from the virus after one time step
         '''
 
         if A.shape != W.shape:
@@ -43,11 +50,14 @@ class WPR:
             raise ValueError('Alpha has to be in [0,1]')
         if p_alpha < 0 or p_alpha > 1:
             raise ValueError('p_alpha has to be in [0,1]')
+        if recovery_rate < 0 or recovery_rate > 1:
+            raise ValueError('recovery_rate has to be in [0,1]')
 
         self.A = A
         self.W = W
         self.n_airports = A.shape[0]                                        #how many airports
         self.ranks = np.ones(self.n_airports)                               #at the beginning, all the airports have the same rank
+
 
         self.degree_out = [sum(A[i, :]) for i in range(self.n_airports)]    #degree out: how many routes exit from an airport
         self.degree_in = [sum(A[:, i]) for i in range(self.n_airports)]     #degree in: how many routes enter in an airport
@@ -59,6 +69,9 @@ class WPR:
         self.theta = theta
         self.alpha = alpha
         self.p_alpha = p_alpha
+
+        self.recovery = recovery
+        self.recovery_rate = recovery_rate
 
         self.n_people_per_airport = [np.sum(A[:, i]) * 100 for i in range(self.n_airports)]                                         #constant value: number of arriving routes*100
         self.infected_per_airport = np.clip(initial_conditions_infected, np.zeros(self.n_airports), self.n_people_per_airport)      #the infected people per airport: intialized with the initial conditions
@@ -101,15 +114,36 @@ class WPR:
         return np.array(probability_list, dtype=np.int64)
 
 
+    def recovered_people(self):
+
+        '''
+        How many people recover in each airport at each time step: poisson rv sample, with the parameters being proportional as described in the constructor
+        :return: a np.array containing the number of recovered people in each airport
+        '''
+
+
+        lambda_poisson = [self.recovery_rate*i for i in self.infected_per_airport]
+        probability_list = [poisson.rvs(i) for i in lambda_poisson]
+
+        for i in range(len(probability_list)):
+            if probability_list[i] > self.infected_per_airport[i]:  #if the sample is bigger than the actual non infected people: it is truncated to it
+                probability_list[i] = self.infected_per_airport[i]
+
+        return np.array(probability_list, dtype=np.int64)
+
+
+
     def update_infected_per_airport(self, new_infected: np.ndarray[float]):
 
         '''
-        Updating the number of infected and non-infected people per airport
+        Updating the number of infected and non-infected people per airport.
+        If there is recovery: infection happens wrt to old infected. Recovery happens wrt the old infected
         '''
-        self.infected_per_airport += new_infected
-        self.non_infected_per_airport -= new_infected
 
-        #return None
+        recovered = self.recovered_people() if self.recovery else 0
+
+        self.infected_per_airport += (new_infected - recovered)
+        self.non_infected_per_airport -= (new_infected - recovered)
 
 
     def beta_computation(self):
