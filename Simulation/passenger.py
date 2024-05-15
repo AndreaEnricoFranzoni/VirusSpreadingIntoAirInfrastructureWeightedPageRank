@@ -3,6 +3,7 @@ import airport
 
 # Assuming the possibility to be infected on the plane is directly proportional to the number of virus carriers
 ALPHA = 0.1
+BETA = 50
 
 SHUTDOWN_THRESHOLD = 0.05
 SUCCESS_RATE = 0.8
@@ -11,16 +12,21 @@ SUCCESS_RATE = 0.8
 class Passenger:
     def __init__(self, graph):
         self.passengers_info = {}
+        self.id_counter = -1
 
-    def add_passenger(self, passenger_id, airport_id, infected):
+    def add_passenger(self, airport_id, infected):
+        self.id_counter += 1
         passenger_info = {'location': airport_id, 'infected': infected, 'test_positive': False}
-        self.passengers_info[passenger_id] = passenger_info
+        self.passengers_info[self.id_counter] = passenger_info
+        return self.id_counter
 
     def simulate_for_one_step(self, graph, airports, impt_airports=[]):
 
         # Whether to shut down
 
         for airport_id, passengers in airports.airports.items():
+            if len(passengers) == 0:
+                continue
             if airport_id in impt_airports:
                 for passenger_id in passengers:
                     if self.passengers_info[passenger_id]['infected']:
@@ -30,7 +36,6 @@ class Passenger:
                 positive_ratio = self.calculate_positive_passengers(passengers) / len(passengers)
                 if positive_ratio > SHUTDOWN_THRESHOLD:
                     airports.status[airport_id] = False
-
 
         # Transmission
         for passenger_id, passenger_info in self.passengers_info.items():
@@ -62,13 +67,15 @@ class Passenger:
             if len(passengers) == 0:
                 continue
             undetected_num = self.calculate_undetected_passengers(passengers)
-            infection_possibility = ALPHA * undetected_num / (len(passengers)-self.calculate_positive_passengers(passengers))
-            self.simulate_infection(passengers, infection_possibility)
+            infection_possibility = BETA * ALPHA * undetected_num / (
+                    len(passengers) - self.calculate_positive_passengers(passengers))
+            self.simulate_infection(passengers, min(infection_possibility, 1))
 
     def calculate_undetected_passengers(self, passengers):
         counter = 0
         for passenger_id in passengers:
-            if self.passengers_info[passenger_id]['infected'] and not self.passengers_info[passenger_id]['test_positive']:
+            if self.passengers_info[passenger_id]['infected'] and not self.passengers_info[passenger_id][
+                'test_positive']:
                 counter += 1
         return counter
 
