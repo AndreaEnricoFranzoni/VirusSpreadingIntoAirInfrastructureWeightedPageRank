@@ -44,6 +44,14 @@ We are taking three different initial conditions for the WPR and the simulation:
  - saving each simulations on files in order to plot graphs of section `AIMS`.
 
 # Directories
+
+-**`Data`**: contains the `csv` file for both adjacency matrix `A` and weight matrix `W`;
+
+-**`Bibliography`**: contains paper that we are referring to, including the one explaining Weighted PageRank;
+
 -**`RankingAirports`**: contains a folder for each **`WPR`**, **`PR`** and **`DC`** way of ranking airports. For the latter twos, it gives the same results independently from virus typology and recovery. For the first one, a ranking for each initial condition, for each type of virus and recovery rate is performed;
+
 -**`RankingResults`**: contains `csv` file for each of the afromentioned rankings;
+
+-**`Simulations`**:
 
