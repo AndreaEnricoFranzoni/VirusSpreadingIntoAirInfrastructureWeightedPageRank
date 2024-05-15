@@ -13,8 +13,8 @@ alpha = 0.45    #tradeoff between strength and infection
 
 
 #initial conditions
-initially_infected_at_airports = np.ones(A.shape[0], dtype=float)
-# initially_infected_at_airports[A.keys().tolist().index("ARN")] = 1
+initially_infected_at_airports = np.zeros(A.shape[0], dtype=float)
+initially_infected_at_airports[A.keys().tolist().index("ARN")] = 1
 
 #probability that one people get infected: alpha*proportion of infected people in the airport
 p_alpha = 0.1
