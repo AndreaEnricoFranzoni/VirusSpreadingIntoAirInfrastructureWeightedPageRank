@@ -13,8 +13,23 @@ alpha = 0.45    #tradeoff between strength and infection
 
 
 #initial conditions
+
+#FIRST CASE
+#only 2% of people in Stockholm ARL is infected
+name_airports_with_infected = "ARN"
+
+#SECOND CASE
+#name_airports_with_infected = ("FRA", "CDG")
+
+
+
 initially_infected_at_airports = np.zeros(A.shape[0], dtype=float)
-initially_infected_at_airports[A.keys().tolist().index("ARN")] = 1
+people_tot = [np.sum(A.to_numpy()[:, i]) * 100 for i in range(A.to_numpy().shape[0])][A.keys().tolist().index(name_airports_with_infected)]
+initially_infected_at_airports[A.keys().tolist().index(name_airports_with_infected)] = 0.02*people_tot
+
+
+
+
 
 #probability that one people get infected: alpha*proportion of infected people in the airport
 p_alpha = 0.1
@@ -25,7 +40,7 @@ p_alpha = 0.1
 wpr = WPR(A.to_numpy(), W.to_numpy(), gamma=gamma, theta=theta, alpha=alpha, p_alpha=p_alpha, initial_conditions_infected=initially_infected_at_airports)
 
 
-tol = 1e-1
+tol = 5e-1
 max_iter = 100
 wpr.converge(tolerance=tol, max_iterations=max_iter)
 
