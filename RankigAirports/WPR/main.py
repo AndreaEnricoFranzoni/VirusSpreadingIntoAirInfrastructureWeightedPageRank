@@ -16,7 +16,7 @@ alpha = 0.45    #tradeoff between strength and infection
 
 #FIRST CASE
 #only 2% of people in Stockholm ARL is infected
-name_airports_with_infected = ["FNA", "CKY", "ROB"]
+name_airports_with_infected = ["ARN"]
 
 #SECOND CASE
 #name_airports_with_infected = ("FRA", "CDG")
@@ -43,7 +43,7 @@ for airport_code in name_airports_with_infected:
 p_alphas = [0.1, 0.25, 0.5]
 
 for p_alpha in p_alphas:
-    wpr = WPR(A.to_numpy(), W.to_numpy(), gamma=gamma, theta=theta, alpha=alpha, p_alpha=p_alpha, initial_conditions_infected=initially_infected_at_airports)
+    wpr = WPR(A.to_numpy(), W.to_numpy(), gamma=gamma, theta=theta, alpha=alpha, p_alpha=p_alpha, initial_conditions_infected=initially_infected_at_airports, recovery=True, recovery_rate=0.2)
 
 
     tol = 5e-1
@@ -73,7 +73,7 @@ for p_alpha in p_alphas:
         new_line = pd.DataFrame({'Airport': [airports[airports_idx]], 'Ranking': [ranks[airports_idx]]})
         results = pd.concat([results, new_line], ignore_index=True)
 
-    results.to_csv(f"/Users/lscheibel/Projects/DataMiningProject/RankingResults/WPR/without_recovery/Ebola/results_WPR_big_airports_{p_alpha}.csv")
+    results.to_csv(f"/Users/andreafranzoni/Documents/Politecnico/Magistrale/V anno/Data Mining/Project/DataMiningProject/RankingResults/WPR/with_recovery/Stockholm/results_WPR_ARN_{p_alpha}.csv")
 
     #printing the results
     count = 0
