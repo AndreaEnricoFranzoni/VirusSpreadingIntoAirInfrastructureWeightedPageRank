@@ -14,11 +14,11 @@ We want to confront this results with the spread if:
  - random airports are shut down.
 The simulation of the model with airports from WPR shut down should be the best one with respect to the proportion of infected people.
 We want to see the spread of three different type of virus (proportion of infection respectively: `0.1`, `0.25`, `0.5`).
-Consecutively, introducing also a recovery factor in the WPR ranking.
+Consecutively, introducing also a recovery factor in the WPR ranking: at each time step, in each aiport, a sample from a Poisson of parameter `0.2` times number of infected people indicates the number of people that recovers, in each airport. 
 We are taking three different initial conditions for the WPR and the simulation:
-1. `2%` of people in ARL are infected. Nobody else in the world;
-2. `2%` of people in FRA, CDG, AMS, IST, ATL are infected. Nobody else in the world;
-3. only people in some small airports in Africa.
+1. spread from Arlanda: `2%` of people in ARL are infected. Nobody else in the world;
+2. spread from big airports: are the ten airports with highest out degree: `2%` of people in each of FRA, CDG, AMS, IST, ATL, PEK, ORD, MUC, DME and DXB are infected. Nobody else in the world;
+3. simulation of Ebola spreading: `2%` of people in each of CKY, FNA and ROB (Guinea, Sierra Leone and Liberia capital city airport) are infected. Nobody else in the world;
 
 
 
@@ -29,18 +29,21 @@ We are taking three different initial conditions for the WPR and the simulation:
  -  Extra: vary `gamma` and `theta` to optimize WPR.
 
 # DONE
- - Ranking with respect to PR, yet without recovery, yet with recovey (we do not take account for infection here);
- - Ranking with respect to in-degree/out-degree, yet without recovery, yet with recovey (we do not take account for infection here);
-
-# TODO
+ - Ranking with respect to PR, yet without recovery, yet with recovery (we do not take account for infection here);
+ - ranking with respect to in-degree/out-degree, yet without recovery, yet with recovey (we do not take account for infection here);
  - run WPR for each initial conditions, for each virus;
  - modeling of recovery factor;
  - run all the WPR inserting recovery;
- - choosing how many airports taking out from the ranking (we were doing taking the 10 highest ranked airports);
+ - results of each ranking stored.
+
+# TODO
  - simulations for all WPR, with and without recovery, for all virus, for all initial conditions;
  - simulations for all PR, with and without recovery, for all virus, for all initial conditions;
  - simulations for all DC, in and out,, with and without recovery, for all virus, for all initial conditions;
  - simulations for random chosen airports, with and without recovery, for all virus, for all initial conditions;
  - saving each simulations on files in order to plot graphs of section `AIMS`.
 
-# FILES
+# Directories
+-**`RankingAirports`**: contains a folder for each **`WPR`**, **`PR`** and **`DC`** way of ranking airports. For the latter twos, it gives the same results independently from virus typology and recovery. For the first one, a ranking for each initial condition, for each type of virus and recovery rate is performed;
+-**`RankingResults`**: contains `csv` file for each of the afromentioned rankings;
+
