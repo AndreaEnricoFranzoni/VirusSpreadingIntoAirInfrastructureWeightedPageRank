@@ -1,69 +1,67 @@
 import numpy as np
 import pandas as pd
 import plotly.express as px
-
-from DEG import DEG
 from WPR import WPR
 
-airports_data = pd.read_csv('airports.csv')
 
 A = pd.read_csv('A.csv', index_col=0)  # Adjacency matrix
 W = pd.read_csv('W.csv', index_col=0)  # Weights matrix
 
+gamma = 0.95    #teleportation parameter
+theta = 0.9     #tradeoff between strenght and degree: more is high, more importance we are giving to number of flights wrt number of connections: more reasonable
+alpha = 0.45    #tradeoff between strength and infection
 
-<<<<<<< HEAD
-=======
 
-# At every airport there is one infected person.
-# Since there is no recovery atm, everybody will be infected after just a few time steps.
+#initial conditions
 initially_infected_at_airports = np.ones(A.shape[0], dtype=float)
 # initially_infected_at_airports[A.keys().tolist().index("ARN")] = 1
 
-wpr = WPR(A.to_numpy(), W.to_numpy(), 0.95, 0.9, 0.45, initially_infected_at_airports)
-
-# Rank airports.
-# WPR
-# wpr.converge(1, 25)
-# PR
+#probability that one people get infected: alpha*proportion of infected people in the airport
+p_alpha = 0.1
+#p_alpha = 0.25
+#p_alpha = 0.5
 
 
-# ranks_wpr = wpr.ranks
+wpr = WPR(A.to_numpy(), W.to_numpy(), gamma=gamma, theta=theta, alpha=alpha, p_alpha=p_alpha, initial_conditions_infected=initially_infected_at_airports)
 
+
+tol = 1e-1
+max_iter = 100
+wpr.converge(tolerance=tol, max_iterations=max_iter)
+
+ranks = wpr.ranks
+
+
+
+airports_data = pd.read_csv('airports.csv')
 airports = A.keys().tolist()
-
-# pr = PR(A.to_numpy(), 0.95)
-# pr.converge(1, 2)
-# ranks_pr = pr.ranks
-# idx_sort_pr = ranks_pr.argsort()
-
-deg = DEG(A.to_numpy())
-ranks_deg = np.array(deg.degree_in)
-idx_sort_deg = ranks_deg.argsort()
+idx_sort = ranks.argsort()
 
 
+
+#order of results
+airports_data = pd.read_csv('airports.csv')
+airports = A.keys().tolist()
+idx_sort = ranks.argsort()
 # idx_sort = range(len(ranks)) # Sorts alphabetically.
 
-for airport_idx in idx_sort_deg:
-    print("{airport}: {value}".format(airport=airports[airport_idx], value=ranks_deg[airport_idx]))
+#saving it as pd dataframe and then as .csv in the appropriate directory
+results = pd.DataFrame(columns=['Airport', 'Ranking'])
 
-def draw_map():
-    color_scale = [(0, 'orange'), (1, 'red')]
-    fig = px.scatter_mapbox(
-        airports_data,
-        lat="Latitude",
-        lon="Longitude",
-        hover_name="Name",
-        hover_data=["IATA", "ICAO"],
-        # color="Listed",
-        # color_continuous_scale=color_scale,
-        # size="Listed",
-        zoom=8,
-        height=800,
-        width=1600
-    )
-    fig.update_layout(mapbox_style="open-street-map")
-    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-    fig.show()
+for airports_idx in reversed(idx_sort):
+    new_line = pd.DataFrame({'Airport': [airports[airports_idx]], 'Ranking': [ranks[airports_idx]]})
+    results = pd.concat([results, new_line], ignore_index=True)
 
-# draw_map()
->>>>>>> 49dc6c9e5cbc8d13dd23c57b800298803206060d
+results.to_csv('/Users/andreafranzoni/Documents/Politecnico/Magistrale/V anno/Data Mining/Project/DataMiningProject/RankingResults/WPR/results_WPR.csv')
+
+
+#printing the results
+count = 0
+for airport_idx in reversed(idx_sort):
+    count += 1
+    print(count, ": ", "{airport}: {value}".format(airport=airports[airport_idx], value=ranks[airport_idx]))
+
+
+
+
+

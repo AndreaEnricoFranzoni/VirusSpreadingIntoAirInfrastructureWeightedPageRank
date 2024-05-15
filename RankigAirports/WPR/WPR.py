@@ -11,6 +11,7 @@ class WPR:
                  gamma: float,
                  theta: float,
                  alpha: float,
+                 p_alpha: float,
                  initial_conditions_infected: np.ndarray,
                  ) -> None:
 
@@ -28,6 +29,7 @@ class WPR:
         :param gamma: teleportation parameter ([0,1)): in this case, has to be as high as possible: not dead ends in the graph (?)
         :param theta: trade-off degree-weight parameter ([0,1]): in this case, has to be as high as possible: number of flights are more important than number of connections
         :param alpha: parameter of the convex combination for evaluating beta_i: has to be low in order to give more importance to the infection parameter
+        :param p_alpha: p_alpha*proportion_of_infected_people_at_airport is the probability that a person get infected
         :param initial_conditions_infected: number of infected in each airport at time 0
         '''
 
@@ -39,6 +41,8 @@ class WPR:
             raise ValueError('Theta has to be in [0,1]')
         if alpha < 0 or alpha > 1:
             raise ValueError('Alpha has to be in [0,1]')
+        if p_alpha < 0 or p_alpha > 1:
+            raise ValueError('p_alpha has to be in [0,1]')
 
         self.A = A
         self.W = W
@@ -54,6 +58,7 @@ class WPR:
         self.gamma = gamma
         self.theta = theta
         self.alpha = alpha
+        self.p_alpha = p_alpha
 
         self.n_people_per_airport = [np.sum(A[:, i]) * 100 for i in range(self.n_airports)]                                         #constant value: number of arriving routes*100
         self.infected_per_airport = np.clip(initial_conditions_infected, np.zeros(self.n_airports), self.n_people_per_airport)      #the infected people per airport: intialized with the initial conditions
@@ -67,7 +72,6 @@ class WPR:
         Now: deterministic function that is directly proportional to the proportion of infected people in the airport
         :return: a list with the probability of a single infection in each airport
         '''
-        alpha = 0.25
 
         a = self.infected_per_airport
         b = self.n_people_per_airport
@@ -79,7 +83,7 @@ class WPR:
             if math.isnan(infected_ratio[i]):
                 x.append(0)
             else:
-                x.append(alpha * infected_ratio[i])
+                x.append(self.p_alpha * infected_ratio[i])
 
         return x
         # return [alpha * (i / j) for i in self.infected_per_airport for j in self.n_people_per_airport]
