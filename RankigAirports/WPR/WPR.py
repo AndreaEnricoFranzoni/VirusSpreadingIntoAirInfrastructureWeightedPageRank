@@ -26,7 +26,7 @@ class WPR:
                                                       - n is the number of non-sick people in the airport at the beginning of the time step (only non infected people can be infected)
                                                       - p is a function of the number of already infected people (deterministic function, proportional to the proportion of already infected people right now)
                      - if recovery: after infection: a Poisson sample is performed to count how many of the infected people recover, with the lambda parameter being equal
-                                                     to a paramter times the number of infected people
+                                                     to a parameter times the number of infected people. If a number bigger than the one of the infected people is sampled, it is truncated to the number of infected people
         Algorithm relays on the paper, with a difference: beta_i varies along the algorithm: Markov chain is  ot homogeneus anymore: relays
 
         :param A: adjacency matrix
