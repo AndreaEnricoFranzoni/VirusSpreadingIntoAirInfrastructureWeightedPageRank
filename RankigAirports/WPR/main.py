@@ -33,8 +33,8 @@ initially_infected_at_airports[A.keys().tolist().index(name_airports_with_infect
 
 #probability that one people get infected: alpha*proportion of infected people in the airport
 #p_alpha = 0.1
-p_alpha = 0.25
-#p_alpha = 0.5
+#p_alpha = 0.25
+p_alpha = 0.5
 
 
 wpr = WPR(A.to_numpy(), W.to_numpy(), gamma=gamma, theta=theta, alpha=alpha, p_alpha=p_alpha, initial_conditions_infected=initially_infected_at_airports)
