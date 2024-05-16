@@ -6,7 +6,7 @@ import airport
 import degree_calculate
 
 PASSENGERS_NUM_CO = 10
-SIMULATE_TIMESTEP = 10
+SIMULATE_TIMESTEP = 30
 
 g = graph.Graph()
 airports = airport.Airport()
@@ -58,21 +58,23 @@ for passenger_id in airports.airports[737]:
     if passenger_id % 50 == airports.airports[737][0] % 50:
         p.passengers_info[passenger_id]["infected"] = True
 
-for _ in range(SIMULATE_TIMESTEP):
+for i in range(SIMULATE_TIMESTEP):
     # p.simulate_for_one_step(g, airports, [3682, 3830, 3364, 1382, 507, 3484, 340, 3670, 3797, 580]) #WPR
     # p.simulate_for_one_step(g, airports, [])
     # p.simulate_for_one_step(g, airports, [340, 1382, 3682, 1701, 580, 3830, 3364, 3670, 4029, 346]) #RPR
     # p.simulate_for_one_step(g, airports, [1, 50, 2000, 4527, 6472, 8246, 9954, 10234, 10497, 13876]) #Random
     # p.simulate_for_one_step(g, airports,
     #                         [340, 1382, 580, 1701, 3682, 3364, 3830, 346, 4029, 3670])  # Degree Centrality-In
+    print(f'STEP: {i}')
     p.simulate_for_one_step(g, airports,
                             [340, 1382, 580, 1701, 3682, 3364, 3830, 346, 4029, 2188])  # Degree Centrality-Out
-    p.show_positive_passengers()
+    p.show_passengers_infos(airports)
     p.show_infected_proportion()
+    print(airports.status)
 
-airports.show_current_airports()
+# airports.show_current_airports()
 
-p.show_infected_proportion()
+# p.show_infected_proportion()
 # p.show_positive_passengers()
-print(airports.status)
+# print(airports.status)
 # p.show_current_location()

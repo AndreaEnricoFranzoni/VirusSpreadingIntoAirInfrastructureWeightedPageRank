@@ -108,3 +108,12 @@ class Passenger:
         for passenger_id, passenger_info in self.passengers_info.items():
             if passenger_info['test_positive']:
                 print(f'Positive Passenger: {passenger_id}')
+
+    def show_passengers_infos(self, airports):
+        for airport_id, passengers in airports.airports.items():
+            print('------------------------------------')
+            print(f'Airport: {airport_id}')
+            for passenger_id in passengers:
+                infected = self.passengers_info[passenger_id]['infected']
+                print(f'P: {passenger_id}, I: {infected} ',end='')
+            print(' ')
