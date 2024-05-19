@@ -6,7 +6,7 @@ import airport
 import degree_calculate
 
 PASSENGERS_NUM_CO = 10
-SIMULATE_TIMESTEP = 60
+SIMULATE_TIMESTEP = 30
 
 g = graph.Graph()
 airports = airport.Airport()
@@ -66,12 +66,12 @@ for i in range(SIMULATE_TIMESTEP):
     #                                          3484, 3670, 580, 3797])  # WPR
     # p.simulate_for_one_step(i, g, airports, [3682, 3830, 3364, 340, 3364, 580,
     #                                          507, 1701, 346, 3484])  # WPR for BigAirports with recovery alpha 3
-    p.simulate_for_one_step(i, g, airports,
-                            [340, 1382, 1701, 580, 3682, 3830, 3364, 3670, 5679, 346])  # PR
+    # p.simulate_for_one_step(i, g, airports,
+    #                         [340, 1382, 1701, 580, 3682, 3830, 3364, 3670, 4029, 346])  # PR
     # p.simulate_for_one_step(i, g, airports, [1,
     #                                          50, 2000, 4527, 6472, 8246, 9954, 10234, 10497, 13876])  # Random
-    # p.simulate_for_one_step(i, g, airports,
-    #                         [340, 1382, 580, 1701, 3682, 3364, 3830, 346, 4029, 3670])  # Degree Centrality
+    p.simulate_for_one_step(i, g, airports,
+                            [340, 1382, 580, 1701, 3682, 3364, 3830, 346, 4029, 3670])  # Degree Centrality
 
     # p.simulate_for_one_step(i, g, airports,
     #                         [3682, 3830, 3364, 1382, 507, 340, 3484, 3670, 580, 3797, 3406, 3316, 1218, 13696, 3751,

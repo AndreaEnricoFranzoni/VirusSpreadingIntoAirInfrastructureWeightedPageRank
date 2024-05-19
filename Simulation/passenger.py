@@ -40,11 +40,11 @@ class Passenger:
         # Transmission
         for passenger_id, passenger_info in self.passengers_info.items():
 
-            # if passenger_info['infected_time'] != -1:
-            #     if timestamp - passenger_info['infected_time'] == 5:
-            #         passenger_info['infected'] = False
-            #         passenger_info['infected_time'] = -1
-            #         passenger_info['test_positive'] = False
+            if passenger_info['infected_time'] != -1:
+                if timestamp - passenger_info['infected_time'] == 5:
+                    passenger_info['infected'] = False
+                    passenger_info['infected_time'] = -1
+                    passenger_info['test_positive'] = False
 
             if passenger_info['test_positive']:
                 continue
