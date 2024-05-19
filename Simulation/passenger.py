@@ -3,7 +3,7 @@ import airport
 
 # Assuming the possibility to be infected on the plane is directly proportional to the number of virus carriers
 ALPHA = 0.1
-BETA = 50
+BETA = 10
 
 SHUTDOWN_THRESHOLD = 0.05
 SUCCESS_RATE = 0.8
@@ -16,11 +16,11 @@ class Passenger:
 
     def add_passenger(self, airport_id, infected):
         self.id_counter += 1
-        passenger_info = {'location': airport_id, 'infected': infected, 'test_positive': False}
+        passenger_info = {'location': airport_id, 'infected': infected, 'test_positive': False, 'infected_time': -1}
         self.passengers_info[self.id_counter] = passenger_info
         return self.id_counter
 
-    def simulate_for_one_step(self, graph, airports, impt_airports=[]):
+    def simulate_for_one_step(self, timestamp, graph, airports, impt_airports=[]):
 
         # Whether to shut down
 
@@ -39,6 +39,13 @@ class Passenger:
 
         # Transmission
         for passenger_id, passenger_info in self.passengers_info.items():
+
+            # if passenger_info['infected_time'] != -1:
+            #     if timestamp - passenger_info['infected_time'] == 5:
+            #         passenger_info['infected'] = False
+            #         passenger_info['infected_time'] = -1
+            #         passenger_info['test_positive'] = False
+
             if passenger_info['test_positive']:
                 continue
 
@@ -69,7 +76,7 @@ class Passenger:
             undetected_num = self.calculate_undetected_passengers(passengers)
             infection_possibility = BETA * ALPHA * undetected_num / (
                     len(passengers) - self.calculate_positive_passengers(passengers))
-            self.simulate_infection(passengers, min(infection_possibility, 1))
+            self.simulate_infection(timestamp, passengers, min(infection_possibility, ALPHA))
 
     def calculate_undetected_passengers(self, passengers):
         counter = 0
@@ -86,11 +93,12 @@ class Passenger:
                 counter += 1
         return counter
 
-    def simulate_infection(self, passengers, infection_possibility):
+    def simulate_infection(self, timestamp, passengers, infection_possibility):
         for passenger_id in passengers:
             if not self.passengers_info[passenger_id]['infected']:
                 if random.random() < infection_possibility:
                     self.passengers_info[passenger_id]['infected'] = True
+                    self.passengers_info[passenger_id]['infected_time'] = timestamp
 
     def show_current_location(self):
         for passenger_id, passenger_info in self.passengers_info.items():
@@ -103,6 +111,7 @@ class Passenger:
             if passenger_info['infected']:
                 counter += 1
         print(f'Infected Passengers Proportion: {counter / len(self.passengers_info)}')
+        return counter / len(self.passengers_info)
 
     def show_positive_passengers(self):
         for passenger_id, passenger_info in self.passengers_info.items():
@@ -115,5 +124,5 @@ class Passenger:
             print(f'Airport: {airport_id}')
             for passenger_id in passengers:
                 infected = self.passengers_info[passenger_id]['infected']
-                print(f'P: {passenger_id}, I: {infected} ',end='')
+                print(f'P: {passenger_id}, I: {infected} ', end='')
             print(' ')
