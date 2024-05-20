@@ -15,7 +15,7 @@ dataset_airport.columns = ['Airport ID', 'Name', 'City', 'Country', 'IATA', 'ICA
                            'Timezone', 'DST',
                            'Tz database timezone', 'Type', 'Source']
 
-ranking_file_path = '../RankingResults/WPR/without_recovery/Arlanda/results_WPR_nr_ARN_alpha1.csv'
+ranking_file_path = '../RankingResults/DEG_OUT/results_deg_out.csv'
 
 data_list = []
 with open(ranking_file_path, 'r') as file:

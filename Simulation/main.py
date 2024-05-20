@@ -6,7 +6,7 @@ import airport
 import degree_calculate
 
 PASSENGERS_NUM_CO = 10
-SIMULATE_TIMESTEP = 30
+SIMULATE_TIMESTEP = 25
 
 g = graph.Graph()
 airports = airport.Airport()
@@ -54,14 +54,16 @@ for airport_id, _ in airports.airports.items():
         passenger_index = p.add_passenger(airport_id, False)
         airports.init_passenger(airport_id, passenger_index)
 
-for passenger_id in airports.airports[737]:
-    if passenger_id % 50 == airports.airports[737][0] % 50:
-        p.passengers_info[passenger_id]["infected"] = True
+initial_locations = [340, 1382, 580, 1701, 3682, 3364, 3830, 346, 4029, 2188]
+for location in initial_locations:
+    for passenger_id in airports.airports[location]:
+        if passenger_id % 50 == airports.airports[location][0] % 50:
+            p.passengers_info[passenger_id]["infected"] = True
 
 results = []
 
 for i in range(SIMULATE_TIMESTEP):
-    # p.simulate_for_one_step(i, g, airports, [])
+    p.simulate_for_one_step(i, g, airports, [])
     # p.simulate_for_one_step(i, g, airports, [3682, 3830, 3364, 1382, 507, 340,
     #                                          3484, 3670, 580, 3797])  # WPR
     # p.simulate_for_one_step(i, g, airports, [3682, 3830, 3364, 340, 3364, 580,
@@ -70,8 +72,8 @@ for i in range(SIMULATE_TIMESTEP):
     #                         [340, 1382, 1701, 580, 3682, 3830, 3364, 3670, 4029, 346])  # PR
     # p.simulate_for_one_step(i, g, airports, [1,
     #                                          50, 2000, 4527, 6472, 8246, 9954, 10234, 10497, 13876])  # Random
-    p.simulate_for_one_step(i, g, airports,
-                            [340, 1382, 580, 1701, 3682, 3364, 3830, 346, 4029, 3670])  # Degree Centrality
+    # p.simulate_for_one_step(i, g, airports,
+    #                         [340, 1382, 580, 1701, 3682, 3364, 3830, 346, 4029, 3670])  # Degree Centrality
 
     # p.simulate_for_one_step(i, g, airports,
     #                         [3682, 3830, 3364, 1382, 507, 340, 3484, 3670, 580, 3797, 3406, 3316, 1218, 13696, 3751,
