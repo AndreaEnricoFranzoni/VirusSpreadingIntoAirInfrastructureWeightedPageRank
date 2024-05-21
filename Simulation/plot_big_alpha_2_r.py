@@ -54,5 +54,5 @@ ax.plot(x, random_ratios, label='Random Choice', color='c', linewidth=1.8)
 ax.legend()
 
 plt.grid(True)
-plt.savefig('./plot_big_alpha_2.png', dpi=300)
+plt.savefig('./plot_big_alpha_2_r.png', dpi=300)
 plt.show()

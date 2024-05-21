@@ -73,5 +73,5 @@ ax.plot(x, degree_centrality_ratios, label='Degree Centrality', color='g')
 ax.legend()
 
 plt.grid(True)
-plt.savefig('./plot_big_alpha_1.png', dpi=300)
+plt.savefig('./plot_big_alpha_1_r.png', dpi=300)
 plt.show()

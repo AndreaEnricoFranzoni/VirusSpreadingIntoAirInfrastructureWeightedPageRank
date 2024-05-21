@@ -6,7 +6,7 @@ import airport
 import degree_calculate
 
 PASSENGERS_NUM_CO = 10
-SIMULATE_TIMESTEP = 25
+SIMULATE_TIMESTEP = 30
 
 g = graph.Graph()
 airports = airport.Airport()
@@ -55,6 +55,7 @@ for airport_id, _ in airports.airports.items():
         airports.init_passenger(airport_id, passenger_index)
 
 initial_locations = [340, 1382, 580, 1701, 3682, 3364, 3830, 346, 4029, 2188]
+# initial_locations = [737]
 for location in initial_locations:
     for passenger_id in airports.airports[location]:
         if passenger_id % 50 == airports.airports[location][0] % 50:
