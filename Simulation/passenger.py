@@ -2,7 +2,7 @@ import random
 import airport
 
 # Assuming the possibility to be infected on the plane is directly proportional to the number of virus carriers
-ALPHA = 0.1
+ALPHA = 0.5
 BETA = 10
 
 SHUTDOWN_THRESHOLD = 0.05
