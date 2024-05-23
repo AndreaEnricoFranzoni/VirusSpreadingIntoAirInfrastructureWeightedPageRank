@@ -49,10 +49,11 @@ ax.plot(x, wpr_ratios, label='WPR', color='r')
 ax.plot(x, pr_ratios, label='PR', color='m', linewidth=1.2)
 ax.plot(x, degree_centrality_ratios, label='Degree Centrality', color='g')
 
-ax.plot(x, random_ratios, label='Random Choice', color='c', linewidth=1.8)
+ax.plot(x, random_ratios, label='Random Choice', color='c', linewidth=1.3)
 
 ax.legend()
-
+ax.set_xlabel("Time steps")
+ax.set_ylabel("Infection proportion")
 plt.grid(True)
 plt.savefig('./plot_big_alpha_2.png', dpi=300)
 plt.show()

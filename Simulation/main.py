@@ -6,7 +6,7 @@ import airport
 import degree_calculate
 
 PASSENGERS_NUM_CO = 10
-SIMULATE_TIMESTEP = 50
+SIMULATE_TIMESTEP = 60
 
 g = graph.Graph()
 airports = airport.Airport()
@@ -56,8 +56,8 @@ for airport_id, _ in airports.airports.items():
 
 # initial_locations = [340, 1382, 580, 1701, 3682, 3364, 3830, 346, 4029, 2188]
 
-initial_locations=[1059,1063,4162]
-# initial_locations = [737]
+# initial_locations = [1059, 1063, 4162]
+initial_locations = [737]
 for location in initial_locations:
     for passenger_id in airports.airports[location]:
         if passenger_id % 50 == airports.airports[location][0] % 50:
@@ -66,9 +66,9 @@ for location in initial_locations:
 results = []
 
 for i in range(SIMULATE_TIMESTEP):
-    p.simulate_for_one_step(i, g, airports, [])
+    # p.simulate_for_one_step(i, g, airports, [])
     # p.simulate_for_one_step(i, g, airports, [3682, 3830, 3364, 1382, 507, 340,
-    # #                                          3484, 3670, 580, 3797])  # WPR
+    #                                          3484, 3670, 580, 3797])  # WPR
     # p.simulate_for_one_step(i, g, airports, [3682, 3830, 3364, 340, 3364, 580,
     #                                          507, 1701, 346, 3484])  # WPR for BigAirports with recovery alpha 3
     # p.simulate_for_one_step(i, g, airports,
@@ -78,14 +78,9 @@ for i in range(SIMULATE_TIMESTEP):
     # p.simulate_for_one_step(i, g, airports,
     #                         [340, 1382, 580, 1701, 3682, 3364, 3830, 346, 4029, 3670])  # Degree Centrality
 
-    # p.simulate_for_one_step(i, g, airports,
-    #                         [3682, 3830, 3364, 1382, 507, 340, 3484, 3670, 580, 3797, 3406, 3316, 1218, 13696, 3751,
-    #                          346, 3930, 2188, 3576, 502, 3077, 3370, 4029, 1555, 1229, 3885, 193, 302, 3395, 478, 1613,
-    #                          3876, 345, 3752, 2279, 3998, 3379, 3382, 3393, 2276, 3093, 3494, 3304, 3877, 3462, 1678,
-    #                          3550, 3469, 3386, 737, 1824, 3878, 2179, 609, 3374, 3383, 3645, 1638, 2997, 3858, 599, 351,
-    #                          3448, 3941, 1386, 3361, 2985, 1230, 3577, 3391, 1524, 11051, 3714, 2564, 3520, 2397, 2948,
-    #                          3533, 146, 644, 2072, 3371, 1587, 3376, 3390, 548, 3275, 3375, 1665, 813, 421, 342, 3388,
-    #                          1212, 1056, 2359, 156, 3697, 1128, 2709])  # Top 100 shut down
+    p.simulate_for_one_step(i, g, airports,
+                            [340, 1382, 1701, 580, 3682, 3830, 3364, 3670, 4029, 346]
+                            )  # Top 100 shut down
     print(f'STEP: {i}')
 
     p.show_passengers_infos(airports)

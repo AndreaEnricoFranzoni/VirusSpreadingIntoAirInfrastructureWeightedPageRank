@@ -51,7 +51,8 @@ ax.plot(x, degree_centrality_ratios, label='Degree Centrality', color='g')
 ax.plot(x, random_ratios, label='Random Choice', color='c', linewidth=1.8)
 
 ax.legend()
-
+ax.set_xlabel("Time steps")
+ax.set_ylabel("Infection proportion")
 plt.grid(True)
 plt.savefig('./plot_arlanda_alpha_2.png', dpi=300)
 plt.show()

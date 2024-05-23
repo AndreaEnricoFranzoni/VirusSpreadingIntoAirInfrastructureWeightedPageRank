@@ -15,7 +15,7 @@ dataset_airport.columns = ['Airport ID', 'Name', 'City', 'Country', 'IATA', 'ICA
                            'Timezone', 'DST',
                            'Tz database timezone', 'Type', 'Source']
 
-ranking_file_path = '../RankingResults/DEG_OUT/results_deg_out.csv'
+ranking_file_path = '../RankingResults/PR/results_PR.csv'
 
 data_list = []
 with open(ranking_file_path, 'r') as file:
@@ -29,7 +29,7 @@ dataset_ranking.columns = ['ID', 'Code', 'Value']
 result = []
 counter = 0
 for _, item in dataset_ranking.iterrows():
-    if counter == 101:
+    if counter == 1001:
         break
     counter += 1
     for _, airport in dataset_airport.iterrows():
