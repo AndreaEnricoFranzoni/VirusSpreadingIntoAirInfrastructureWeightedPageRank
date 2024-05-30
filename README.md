@@ -32,5 +32,5 @@ We are taking three different initial conditions for the WPR and the simulation:
 
 -**`RankingResults`**: contains `csv` file for each of the afromentioned rankings;
 
--**`Simulations`**: code for doing simulations and plot of them
+-**`Simulations`**: code for doing simulations. In the folder **`sim_WPR`**, for each configuration possible, there the plot of the result of the simulation, compared to the other way of performing the rankings.
 
