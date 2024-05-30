@@ -22,36 +22,15 @@ We are taking three different initial conditions for the WPR and the simulation:
 
 
 
-# AIMS
- -  Graph for the proportion of infected people worldwide vs time, for each of the virus.
- -  When airports are shut down.
- -  After having proved the goodness of WPR: graph worldwide in which we print the airports, labeled depending on their rankings.
- -  Extra: vary `gamma` and `theta` to optimize WPR.
-
-# DONE
- - Ranking with respect to PR, yet without recovery, yet with recovery (we do not take account for infection here);
- - ranking with respect to in-degree/out-degree, yet without recovery, yet with recovey (we do not take account for infection here);
- - run WPR for each initial conditions, for each virus;
- - modeling of recovery factor;
- - run all the WPR inserting recovery;
- - results of each ranking stored.
-
-# TODO
- - simulations for all WPR, with and without recovery, for all virus, for all initial conditions;
- - simulations for all PR, with and without recovery, for all virus, for all initial conditions;
- - simulations for all DC, in and out,, with and without recovery, for all virus, for all initial conditions;
- - simulations for random chosen airports, with and without recovery, for all virus, for all initial conditions;
- - saving each simulations on files in order to plot graphs of section `AIMS`.
-
 # Directories
 
--**`Data`**: contains the `csv` file for both adjacency matrix `A` and weight matrix `W`;
+-**`Data`**: contains the `csv` file for both adjacency matrix `A` and weight matrix `W`, and also some simple analysis of graph topology;
 
--**`Bibliography`**: contains paper that we are referring to, including the one explaining Weighted PageRank;
+-**`Bibliography`**: contains the project report containing more detaild explanations of methods, assumptions and results, other that the paper referred to Weighted PageRank;
 
 -**`RankingAirports`**: contains a folder for each **`WPR`**, **`PR`** and **`DC`** way of ranking airports. For the latter twos, it gives the same results independently from virus typology and recovery. For the first one, a ranking for each initial condition, for each type of virus and recovery rate is performed;
 
 -**`RankingResults`**: contains `csv` file for each of the afromentioned rankings;
 
--**`Simulations`**:
+-**`Simulations`**: code for doing simulations and plot of them
 
